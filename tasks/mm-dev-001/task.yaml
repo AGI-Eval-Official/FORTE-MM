@@ -1,0 +1,6 @@
+id: mm-dev-001
+name: mm-dev-001
+category: dev
+grading_type: llm_judge
+timeout_seconds: 2400
+short_description: '基于ER图分析架构并生成PostgreSQL代码。'

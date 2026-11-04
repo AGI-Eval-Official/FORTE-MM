@@ -1,0 +1,6 @@
+id: mm-Operations-010
+name: mm-Operations-010
+category: operations
+grading_type: llm_judge
+timeout_seconds: 2400
+short_description: '对比封面图，根据规则进行打分并排序'

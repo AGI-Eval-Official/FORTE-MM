@@ -1,0 +1,6 @@
+id: mm-sales-007
+name: mm-sales-007
+category: sales
+grading_type: llm_judge
+timeout_seconds: 2400
+short_description: '根据佣金比例和结算规则计算佣金并记录异常到账金额'

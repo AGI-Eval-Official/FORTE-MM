@@ -1,0 +1,6 @@
+id: mm-algorithm-001
+name: mm-algorithm-001
+category: algorithm
+grading_type: llm_judge
+timeout_seconds: 2400
+short_description: '根据提供的文件和图片完成算法代码分析'

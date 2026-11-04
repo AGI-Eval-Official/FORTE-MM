@@ -1,0 +1,6 @@
+id: mm-qa-011
+name: mm-qa-011
+category: qa
+grading_type: llm_judge
+timeout_seconds: 2400
+short_description: '对电商Web应用进行 E2E 自动化测试。'

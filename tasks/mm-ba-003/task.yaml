@@ -1,0 +1,6 @@
+id: mm-ba-003
+name: mm-ba-003
+category: ba
+grading_type: llm_judge
+timeout_seconds: 2400
+short_description: '根据提供的文件和图片输出售后投诉问题报告'

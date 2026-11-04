@@ -1,0 +1,6 @@
+id: mm-pm-001
+name: mm-pm-001
+category: pm
+grading_type: llm_judge
+timeout_seconds: 2400
+short_description: '根据提供的流程图分析流程环节问题并优化'

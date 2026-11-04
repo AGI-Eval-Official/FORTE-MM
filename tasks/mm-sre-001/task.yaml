@@ -1,0 +1,5 @@
+id: mm-sre-001
+name: mm-sre-001
+category: sre
+grading_type: llm_judge
+timeout_seconds: 2400

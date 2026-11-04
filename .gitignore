@@ -1,15 +1,5 @@
 # Local artifacts
 results/
-extra_skills/
-
-# The repo ships one demo task per profession (task folders under tasks/).
-# Task folders added locally beyond the shipped ones stay out of the repo.
-tasks/*
-!tasks/.gitkeep
-
-# Secrets — never commit gateway config or keys
-openclaw_config/openclaw.json
-openclaw_config/.env
 
 # Python
 __pycache__/

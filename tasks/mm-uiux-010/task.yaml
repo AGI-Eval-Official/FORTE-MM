@@ -1,0 +1,6 @@
+id: mm-uiux-010
+name: mm-uiux-010
+category: uiux
+grading_type: llm_judge
+timeout_seconds: 2400
+short_description: '图标系统视觉重绘建议'

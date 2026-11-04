@@ -1,0 +1,6 @@
+id: mm-Legal-001
+name: mm-Legal-001
+category: legal
+grading_type: llm_judge
+timeout_seconds: 2400
+short_description: '识别并判断用印申请单是否合规并输出表格'

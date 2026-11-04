@@ -1,0 +1,9 @@
+path_id,path_name,type,priority,min_assertions,must_screenshot,timeout_ms
+PATH-01,正常登录流程,正常路径,P0,2,true,10000
+PATH-02,登录失败锁定,异常路径,P0,2,true,10000
+PATH-03,搜索商品,正常路径,P1,2,true,10000
+PATH-04,加入购物车,正常路径,P0,2,true,10000
+PATH-05,正常结算下单,正常路径,P0,2,true,15000
+PATH-06,支付成功,正常路径,P0,2,true,15000
+PATH-07,支付失败,异常路径,P1,2,true,15000
+PATH-08,空购物车结算,边界条件,P1,2,true,10000

@@ -1,0 +1,6 @@
+id: mm-Finance-001
+name: mm-Finance-001
+category: finance
+grading_type: llm_judge
+timeout_seconds: 2400
+short_description: '梳理目前为止到期客户应付账款、实际到账回款和超期欠款客户'

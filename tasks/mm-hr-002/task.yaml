@@ -1,0 +1,6 @@
+id: mm-hr-002
+name: mm-hr-002
+category: hr
+grading_type: llm_judge
+timeout_seconds: 2400
+short_description: '读取简历及相关信息，根据筛选标准输出合格简历'

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>电商应用 - E2E 测试目标页面</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f5; color: #333; }
+    .hidden { display: none !important; }
+    .page { min-height: 100vh; padding: 20px; }
+
+    /* Nav */
+    nav { background: #1a1a2e; color: #fff; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    nav .logo { font-size: 20px; font-weight: 700; color: #22d3ee; }
+    nav .nav-links a { color: #ccc; text-decoration: none; margin-left: 20px; cursor: pointer; }
+    nav .nav-links a:hover { color: #22d3ee; }
+    .cart-badge { background: #ef4444; color: #fff; border-radius: 50%; padding: 2px 7px; font-size: 12px; margin-left: 4px; }
+
+    /* Forms */
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
+    .form-group input { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; }
+    .form-group input:focus { outline: none; border-color: #22d3ee; }
+    .btn { padding: 10px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; transition: opacity .2s; }
+    .btn:hover { opacity: .85; }
+    .btn-primary { background: #22d3ee; color: #fff; }
+    .btn-danger { background: #ef4444; color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid #22d3ee; color: #22d3ee; }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+    .error-msg { color: #ef4444; font-size: 14px; margin-top: 8px; padding: 8px 12px; background: #fef2f2; border-radius: 6px; }
+    .success-msg { color: #16a34a; font-size: 14px; margin-top: 8px; padding: 8px 12px; background: #f0fdf4; border-radius: 6px; }
+    .warn-msg { color: #d97706; font-size: 14px; margin-top: 8px; padding: 8px 12px; background: #fffbeb; border-radius: 6px; }
+
+    /* Cards */
+    .card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.08); margin-bottom: 16px; }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .product-card { background: #fff; border-radius: 10px; padding: 16px; box-shadow: 0 2px 6px rgba(0,0,0,.07); cursor: pointer; transition: transform .2s; }
+    .product-card:hover { transform: translateY(-2px); }
+    .product-card .price { color: #ef4444; font-size: 18px; font-weight: 700; margin: 8px 0; }
+    .product-card .rating { color: #f59e0b; font-size: 13px; }
+    .product-card .name { font-weight: 600; font-size: 15px; }
+
+    /* Cart */
+    .cart-item { display: flex; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 1px solid #eee; }
+    .cart-item .item-name { flex: 1; font-weight: 500; }
+    .cart-item .qty-ctrl { display: flex; align-items: center; gap: 8px; }
+    .qty-btn { width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; cursor: pointer; font-size: 16px; }
+    .cart-total { font-size: 18px; font-weight: 700; text-align: right; margin-top: 16px; }
+
+    /* Order */
+    .order-number { font-size: 28px; font-weight: 700; color: #22d3ee; letter-spacing: 2px; }
+    .status-icon { font-size: 64px; text-align: center; margin: 20px 0; }
+
+    /* Search */
+    .search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+    .search-bar input { flex: 1; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; }
+
+    /* Page header */
+    .page-title { font-size: 24px; font-weight: 700; margin-bottom: 20px; color: #1a1a2e; }
+    .container { max-width: 960px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+
+<nav id="main-nav" class="hidden">
+  <div class="logo">ShopDemo</div>
+  <div class="nav-links">
+    <a onclick="navigate('home')">首页</a>
+    <a onclick="navigate('search')">搜索</a>
+    <a onclick="navigate('cart')">购物车<span class="cart-badge" id="cart-count" data-testid="cart-count">0</span></a>
+    <a onclick="navigate('orders')">订单</a>
+    <a onclick="navigate('profile')">个人中心</a>
+    <a onclick="logout()" style="color:#ef4444">退出</a>
+  </div>
+</nav>
+
+<!-- ===== 登录页 ===== -->
+<div id="page-login" class="page">
+  <div class="container" style="max-width:420px;padding-top:80px">
+    <div class="card">
+      <h2 style="margin-bottom:24px;font-size:22px">用户登录</h2>
+      <div class="form-group">
+        <label>用户名</label>
+        <input type="text" id="login-username" data-testid="login-username" placeholder="请输入用户名">
+      </div>
+      <div class="form-group">
+        <label>密码</label>
+        <input type="password" id="login-password" data-testid="login-password" placeholder="请输入密码">
+      </div>
+      <div id="login-error" class="error-msg hidden" data-testid="login-error"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:8px" id="login-btn" data-testid="login-btn" onclick="doLogin()">登录</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 首页 ===== -->
+<div id="page-home" class="page hidden">
+  <div class="container">
+    <div class="page-title">为你推荐</div>
+    <div class="search-bar">
+      <input type="text" id="home-search-input" data-testid="home-search-input" placeholder="搜索商品...">
+      <button class="btn btn-primary" data-testid="home-search-btn" onclick="doSearch()">搜索</button>
+    </div>
+    <div class="product-grid" id="home-products" data-testid="home-products"></div>
+  </div>
+</div>
+
+<!-- ===== 搜索结果页 ===== -->
+<div id="page-search" class="page hidden">
+  <div class="container">
+    <div class="search-bar">
+      <input type="text" id="search-input" data-testid="search-input" placeholder="搜索商品...">
+      <button class="btn btn-primary" data-testid="search-btn" onclick="doSearch()">搜索</button>
+    </div>
+    <div class="page-title" id="search-title" data-testid="search-title"></div>
+    <div id="search-results" data-testid="search-results" class="product-grid"></div>
+    <div id="search-empty" class="hidden warn-msg" data-testid="search-empty">未找到相关商品</div>
+  </div>
+</div>
+
+<!-- ===== 商品详情页 ===== -->
+<div id="page-product" class="page hidden">
+  <div class="container">
+    <div class="card">
+      <div id="product-name" data-testid="product-name" class="page-title"></div>
+      <div id="product-price" data-testid="product-price" style="color:#ef4444;font-size:24px;font-weight:700;margin:12px 0"></div>
+      <div id="product-rating" data-testid="product-rating" style="color:#f59e0b;margin-bottom:16px"></div>
+      <div id="product-desc" data-testid="product-desc" style="color:#666;margin-bottom:20px"></div>
+      <button class="btn btn-primary" data-testid="add-to-cart-btn" onclick="addToCart()">加入购物车</button>
+      <div id="add-cart-msg" class="success-msg hidden" data-testid="add-cart-msg">已加入购物车！</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 购物车 ===== -->
+<div id="page-cart" class="page hidden">
+  <div class="container">
+    <div class="page-title">购物车</div>
+    <div id="cart-items" data-testid="cart-items"></div>
+    <div id="cart-empty-msg" class="warn-msg hidden" data-testid="cart-empty-msg">购物车为空，请先添加商品</div>
+    <div class="cart-total" id="cart-total" data-testid="cart-total"></div>
+    <div style="text-align:right;margin-top:16px">
+      <button class="btn btn-primary" data-testid="checkout-btn" onclick="goCheckout()">去结算</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 结算页 ===== -->
+<div id="page-checkout" class="page hidden">
+  <div class="container">
+    <div class="page-title">确认订单</div>
+    <div class="card">
+      <div class="form-group">
+        <label>收货地址</label>
+        <input type="text" id="checkout-address" data-testid="checkout-address" placeholder="请填写收货地址">
+      </div>
+      <div id="checkout-error" class="error-msg hidden" data-testid="checkout-error"></div>
+      <div id="checkout-items" data-testid="checkout-items"></div>
+      <div class="cart-total" id="checkout-total" data-testid="checkout-total"></div>
+      <button class="btn btn-primary" style="margin-top:16px" data-testid="submit-order-btn" onclick="submitOrder()">提交订单</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 支付页 ===== -->
+<div id="page-payment" class="page hidden">
+  <div class="container">
+    <div class="page-title">支付订单</div>
+    <div class="card">
+      <div>订单号：<span id="payment-order-id" data-testid="payment-order-id" style="font-weight:700;color:#22d3ee"></span></div>
+      <div style="margin:16px 0">应付金额：<span id="payment-amount" data-testid="payment-amount" style="color:#ef4444;font-size:20px;font-weight:700"></span></div>
+      <div style="margin-bottom:16px">
+        <label><input type="radio" name="pay-method" value="alipay" checked> 支付宝</label>
+        <label style="margin-left:20px"><input type="radio" name="pay-method" value="wechat"> 微信支付</label>
+      </div>
+      <button class="btn btn-primary" data-testid="pay-success-btn" onclick="simulatePay('success')">确认支付（模拟成功）</button>
+      <button class="btn btn-danger" style="margin-left:12px" data-testid="pay-fail-btn" onclick="simulatePay('fail')">模拟支付失败</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 订单成功页 ===== -->
+<div id="page-order-success" class="page hidden">
+  <div class="container" style="text-align:center;padding-top:60px">
+    <div class="status-icon">✅</div>
+    <h2 style="color:#16a34a;margin-bottom:16px">支付成功！</h2>
+    <div>订单号：<span id="success-order-id" data-testid="success-order-id" class="order-number"></span></div>
+    <div style="margin-top:24px">
+      <button class="btn btn-outline" onclick="navigate('home')">继续购物</button>
+      <button class="btn btn-primary" style="margin-left:12px" onclick="navigate('orders')">查看订单</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 支付失败页 ===== -->
+<div id="page-order-fail" class="page hidden">
+  <div class="container" style="text-align:center;padding-top:60px">
+    <div class="status-icon">❌</div>
+    <h2 style="color:#ef4444;margin-bottom:16px">支付失败</h2>
+    <div id="fail-reason" data-testid="fail-reason" class="error-msg" style="display:inline-block;margin-bottom:24px"></div>
+    <div>
+      <button class="btn btn-primary" onclick="navigate('payment')">重新支付</button>
+      <button class="btn btn-outline" style="margin-left:12px" onclick="navigate('home')">返回首页</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 个人中心 ===== -->
+<div id="page-profile" class="page hidden">
+  <div class="container">
+    <div class="page-title">个人中心</div>
+    <div class="card">
+      <div data-testid="profile-username">用户名：<span id="profile-name"></span></div>
+      <div style="margin-top:12px" data-testid="profile-email">邮箱：demo@example.com</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 订单列表 ===== -->
+<div id="page-orders" class="page hidden">
+  <div class="container">
+    <div class="page-title">我的订单</div>
+    <div id="orders-list" data-testid="orders-list"></div>
+  </div>
+</div>
+
+<script>
+// ===== 状态管理 =====
+const state = {
+  currentPage: 'login',
+  loginAttempts: 0,
+  locked: false,
+  cart: [],
+  currentProduct: null,
+  currentOrderId: null,
+  currentAmount: 0,
+  searchKeyword: ''
+};
+
+const MOCK_USERS = { 'testuser': 'password123', 'admin': 'admin888' };
+
+const MOCK_PRODUCTS = [
+  { id: 1, name: 'iPhone 15 Pro', price: 8999, rating: '⭐⭐⭐⭐⭐ 4.9', desc: '最新旗舰手机，A17 Pro 芯片', category: '手机' },
+  { id: 2, name: '华为 Mate 60', price: 6999, rating: '⭐⭐⭐⭐⭐ 4.8', desc: '麒麟芯片，卫星通话', category: '手机' },
+  { id: 3, name: 'MacBook Pro 14', price: 14999, rating: '⭐⭐⭐⭐ 4.7', desc: 'M3 Pro 芯片，专业创作利器', category: '电脑' },
+  { id: 4, name: '小米电视 65"', price: 3299, rating: '⭐⭐⭐⭐ 4.6', desc: '4K OLED，120Hz 刷新率', category: '家电' },
+  { id: 5, name: 'AirPods Pro 2', price: 1899, rating: '⭐⭐⭐⭐⭐ 4.8', desc: '主动降噪，空间音频', category: '耳机' },
+  { id: 6, name: '戴森吸尘器 V15', price: 4599, rating: '⭐⭐⭐⭐ 4.5', desc: '激光探测，强劲吸力', category: '家电' },
+];
+
+// ===== 路由 =====
+function navigate(page, params = {}) {
+  const allPages = ['login','home','search','product','cart','checkout','payment','order-success','order-fail','profile','orders'];
+  allPages.forEach(p => {
+    const el = document.getElementById('page-' + p);
+    if (el) el.classList.add('hidden');
+  });
+  const target = document.getElementById('page-' + page);
+  if (target) target.classList.remove('hidden');
+
+  const nav = document.getElementById('main-nav');
+  if (page === 'login') { nav.classList.add('hidden'); }
+  else { nav.classList.remove('hidden'); }
+
+  state.currentPage = page;
+  // 更新 URL hash 模拟路由（使用 hash 避免 file:// 协议下刷新丢失页面）
+  const pathMap = {
+    'login': '#/login', 'home': '#/home', 'search': '#/search',
+    'product': '#/product/' + (params.id || ''), 'cart': '#/cart',
+    'checkout': '#/checkout', 'payment': '#/payment' + (state.currentOrderId ? '?orderId=' + state.currentOrderId : ''),
+    'order-success': '#/order/success', 'order-fail': '#/order/fail',
+    'profile': '#/profile', 'orders': '#/orders'
+  };
+  history.pushState({page, params}, '', pathMap[page] || '#/' + page);
+
+  // 页面初始化
+  if (page === 'home') renderHomeProducts();
+  if (page === 'cart') renderCart();
+  if (page === 'checkout') renderCheckout();
+  if (page === 'orders') renderOrders();
+  if (page === 'profile') renderProfile();
+}
+
+// ===== 登录 =====
+function doLogin() {
+  if (state.locked) return;
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+
+  if (!username || !password) {
+    errEl.textContent = '用户名和密码不能为空';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  if (MOCK_USERS[username] === password) {
+    state.loginAttempts = 0;
+    localStorage.setItem('auth_token', 'mock_token_' + username + '_' + Date.now());
+    localStorage.setItem('current_user', username);
+    errEl.classList.add('hidden');
+    navigate('home');
+  } else {
+    state.loginAttempts++;
+    if (state.loginAttempts >= 3) {
+      state.locked = true;
+      errEl.textContent = '账号已锁定，请 30 分钟后重试';
+      document.getElementById('login-btn').disabled = true;
+    } else {
+      errEl.textContent = '用户名或密码错误（剩余尝试次数：' + (3 - state.loginAttempts) + '）';
+    }
+    errEl.classList.remove('hidden');
+  }
+}
+
+function logout() {
+  localStorage.removeItem('auth_token');
+  localStorage.removeItem('current_user');
+  state.loginAttempts = 0;
+  state.locked = false;
+  state.cart = [];
+  document.getElementById('cart-count').textContent = '0';
+  document.getElementById('login-username').value = '';
+  document.getElementById('login-password').value = '';
+  document.getElementById('login-btn').disabled = false;
+  document.getElementById('login-error').classList.add('hidden');
+  navigate('login');
+}
+
+// ===== 首页 =====
+function renderHomeProducts() {
+  const container = document.getElementById('home-products');
+  container.innerHTML = MOCK_PRODUCTS.map(p => `
+    <div class="product-card" onclick="viewProduct(${p.id})" data-testid="product-card-${p.id}">
+      <div class="name">${p.name}</div>
+      <div class="price">¥${p.price.toLocaleString()}</div>
+      <div class="rating">${p.rating}</div>
+    </div>
+  `).join('');
+}
+
+// ===== 搜索 =====
+function doSearch() {
+  // 先从两个输入框中取非空值，navigate 之前就锁定 keyword
+  const homeInput = document.getElementById('home-search-input');
+  const searchInput = document.getElementById('search-input');
+  const keyword = (homeInput && homeInput.value.trim())
+    || (searchInput && searchInput.value.trim())
+    || '';
+  state.searchKeyword = keyword;
+  navigate('search');
+  renderSearch(keyword);
+}
+
+function renderSearch(keyword) {
+  const titleEl = document.getElementById('search-title');
+  const resultsEl = document.getElementById('search-results');
+  const emptyEl = document.getElementById('search-empty');
+  const searchInputEl = document.getElementById('search-input');
+
+  if (searchInputEl) searchInputEl.value = keyword;
+  if (titleEl) titleEl.textContent = keyword ? `"${keyword}" 的搜索结果` : '全部商品';
+
+  const filtered = keyword
+    ? MOCK_PRODUCTS.filter(p => p.name.includes(keyword) || p.category.includes(keyword) || p.desc.includes(keyword))
+    : MOCK_PRODUCTS;
+
+  // 更新 URL 的 q 参数（使用 hash 避免 file:// 协议下页面重载）
+  if (keyword) {
+    history.replaceState({}, '', '#/search?q=' + encodeURIComponent(keyword));
+  }
+
+  if (filtered.length === 0) {
+    resultsEl.innerHTML = '';
+    emptyEl.classList.remove('hidden');
+  } else {
+    emptyEl.classList.add('hidden');
+    resultsEl.innerHTML = filtered.map(p => `
+      <div class="product-card" onclick="viewProduct(${p.id})" data-testid="search-result-${p.id}">
+        <div class="name">${p.name}</div>
+        <div class="price">¥${p.price.toLocaleString()}</div>
+        <div class="rating">${p.rating}</div>
+      </div>
+    `).join('');
+  }
+}
+
+// ===== 商品详情 =====
+function viewProduct(id) {
+  const product = MOCK_PRODUCTS.find(p => p.id === id);
+  if (!product) return;
+  state.currentProduct = product;
+  navigate('product', { id });
+  document.getElementById('product-name').textContent = product.name;
+  document.getElementById('product-price').textContent = '¥' + product.price.toLocaleString();
+  document.getElementById('product-rating').textContent = product.rating;
+  document.getElementById('product-desc').textContent = product.desc;
+  document.getElementById('add-cart-msg').classList.add('hidden');
+}
+
+function addToCart() {
+  if (!state.currentProduct) return;
+  const existing = state.cart.find(i => i.id === state.currentProduct.id);
+  if (existing) {
+    existing.qty++;
+  } else {
+    state.cart.push({ ...state.currentProduct, qty: 1 });
+  }
+  const total = state.cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cart-count').textContent = total;
+  document.getElementById('add-cart-msg').classList.remove('hidden');
+  setTimeout(() => document.getElementById('add-cart-msg').classList.add('hidden'), 2000);
+}
+
+// ===== 购物车 =====
+function renderCart() {
+  const container = document.getElementById('cart-items');
+  const emptyMsg = document.getElementById('cart-empty-msg');
+  const totalEl = document.getElementById('cart-total');
+
+  if (state.cart.length === 0) {
+    container.innerHTML = '';
+    emptyMsg.classList.remove('hidden');
+    totalEl.textContent = '';
+    return;
+  }
+  emptyMsg.classList.add('hidden');
+  container.innerHTML = state.cart.map((item, idx) => `
+    <div class="cart-item" data-testid="cart-item-${item.id}">
+      <div class="item-name">${item.name}</div>
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="changeQty(${idx}, -1)">-</button>
+        <span data-testid="cart-qty-${item.id}">${item.qty}</span>
+        <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+      </div>
+      <div style="width:100px;text-align:right;color:#ef4444;font-weight:600">¥${(item.price * item.qty).toLocaleString()}</div>
+      <button class="btn btn-danger" style="padding:6px 12px;font-size:13px" onclick="removeItem(${idx})">删除</button>
+    </div>
+  `).join('');
+  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+  totalEl.textContent = '合计：¥' + total.toLocaleString();
+}
+
+function changeQty(idx, delta) {
+  state.cart[idx].qty = Math.max(1, state.cart[idx].qty + delta);
+  const total = state.cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cart-count').textContent = total;
+  renderCart();
+}
+
+function removeItem(idx) {
+  state.cart.splice(idx, 1);
+  const total = state.cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cart-count').textContent = total;
+  renderCart();
+}
+
+function goCheckout() {
+  if (state.cart.length === 0) {
+    const emptyMsg = document.getElementById('cart-empty-msg');
+    emptyMsg.classList.remove('hidden');
+    return;
+  }
+  navigate('checkout');
+}
+
+// ===== 结算 =====
+function renderCheckout() {
+  const container = document.getElementById('checkout-items');
+  container.innerHTML = state.cart.map(item => `
+    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee">
+      <span>${item.name} x${item.qty}</span>
+      <span style="color:#ef4444">¥${(item.price * item.qty).toLocaleString()}</span>
+    </div>
+  `).join('');
+  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+  state.currentAmount = total;
+  document.getElementById('checkout-total').textContent = '合计：¥' + total.toLocaleString();
+}
+
+function submitOrder() {
+  const address = document.getElementById('checkout-address').value.trim();
+  const errEl = document.getElementById('checkout-error');
+  if (!address) {
+    errEl.textContent = '请填写收货地址';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  errEl.classList.add('hidden');
+  state.currentOrderId = 'ORD' + Date.now();
+  navigate('payment');
+  document.getElementById('payment-order-id').textContent = state.currentOrderId;
+  document.getElementById('payment-amount').textContent = '¥' + state.currentAmount.toLocaleString();
+}
+
+// ===== 支付 =====
+function simulatePay(result) {
+  if (result === 'success') {
+    const orderId = state.currentOrderId;
+    state.cart = [];
+    document.getElementById('cart-count').textContent = '0';
+    navigate('order-success');
+    document.getElementById('success-order-id').textContent = orderId;
+    // 记录到订单历史
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    orders.push({ id: orderId, amount: state.currentAmount, status: '已完成', time: new Date().toLocaleString() });
+    localStorage.setItem('orders', JSON.stringify(orders));
+  } else {
+    navigate('order-fail');
+    document.getElementById('fail-reason').textContent = '支付被拒绝：银行卡余额不足或网络超时，请检查后重试';
+  }
+}
+
+// ===== 个人中心 =====
+function renderProfile() {
+  const username = localStorage.getItem('current_user') || '未知用户';
+  document.getElementById('profile-name').textContent = username;
+}
+
+// ===== 订单列表 =====
+function renderOrders() {
+  const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+  const container = document.getElementById('orders-list');
+  if (orders.length === 0) {
+    container.innerHTML = '<div class="warn-msg" data-testid="orders-empty">暂无订单记录</div>';
+    return;
+  }
+  container.innerHTML = orders.reverse().map(o => `
+    <div class="card" data-testid="order-item-${o.id}">
+      <div>订单号：<strong>${o.id}</strong></div>
+      <div>金额：<span style="color:#ef4444">¥${o.amount}</span></div>
+      <div>状态：<span style="color:#16a34a">${o.status}</span></div>
+      <div style="color:#999;font-size:13px">${o.time}</div>
+    </div>
+  `).join('');
+}
+
+// ===== 初始化 =====
+window.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    navigate('home');
+  } else {
+    navigate('login');
+  }
+});
+</script>
+</body>
+</html>
